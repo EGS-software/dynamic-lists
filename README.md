@@ -1,3 +1,7 @@
+Aqui está a versão do seu documento refatorada e adaptada para o ecossistema e nomenclatura do **Java**. As referências de ambiente virtual, `pytest` e arquivos `.py` foram substituídas por seus equivalentes em Java (JDK, Maven/JUnit e `.java`).
+
+---
+
 # Trabalho Prático: Lista Duplamente Encadeada Dinâmica
 
 **Instituição:** UNIJUÍ - Universidade Regional do Noroeste do Estado do Rio Grande do Sul
@@ -15,35 +19,29 @@
 
 ## 1. Instruções de Execução
 
-Para garantir o isolamento das dependências do projeto e a correta execução dos testes, recomenda-se a execução utilizando um ambiente virtual Python.
+Para garantir a correta compilação e execução do projeto, certifique-se de ter o **Java Development Kit (JDK)** (versão 11 ou superior) e o **Maven** (para os testes automatizados) instalados.
 
-No terminal do seu sistema operacional, navegue até a pasta do projeto e siga os passos abaixo:
+No terminal do seu sistema operacional, navegue até a pasta raiz do projeto e siga os passos abaixo:
 
-**Passo 1: Criar o ambiente virtual**
+**Passo 1: Compilar o projeto**
 
 ```bash
-python -m venv venv
+javac -d bin src/**/*.java
 
 ```
 
-**Passo 2: Ativar o ambiente virtual**
-
-* No Linux/macOS: `source venv/bin/activate`
-* No Windows: `venv\Scripts\activate`
-
-**Passo 3: Instalar as dependências**
-*(O arquivo `requirements.txt` deve conter o pacote `pytest`)*
+**Passo 2: Executar o programa principal**
 
 ```bash
-pip install -r requirements.txt
+java -cp bin Main
 
 ```
 
-**Passo 4: Executar o programa principal e testes**
+**Passo 3: Executar os testes automatizados (JUnit via Maven)**
+*(O arquivo `pom.xml` já contém as dependências do JUnit)*
 
 ```bash
-python main.py
-pytest -v -s tests.py
+mvn test
 
 ```
 
@@ -51,62 +49,22 @@ pytest -v -s tests.py
 
 ## 2. Implementação
 
-A implementação completa das classes `No`, `Informacao` e `ListaDinamica` encontra-se nos arquivos anexos do projeto (arquivos `.py`).
+A implementação completa das classes `No`, `Informacao` e `ListaDinamica` encontra-se nos arquivos fonte do projeto (arquivos `.java` no diretório `src`).
 
-A estratégia adotada utiliza alocação sob demanda e manipulação de ponteiros (`elop` e `eloa`), eliminando completamente o uso de vetores fixos e a necessidade de uma Pilha de Nós Disponíveis (PND). A interface pública exigida foi integralmente mapeada, incluindo o tratamento adequado para inserções, remoções e busca tanto em cenários ideais quanto em listas vazias.
+A estratégia adotada utiliza alocação sob demanda (instanciação de objetos) e manipulação de referências de memória (`elop` e `eloa`), eliminando completamente o uso de vetores fixos e a necessidade de uma Pilha de Nós Disponíveis (PND). A interface pública exigida foi integralmente mapeada, incluindo o tratamento adequado para inserções, remoções e busca, tanto em cenários ideais quanto em listas vazias.
 
 ---
 
 ## 3. Testes e Evidências
 
-Para comprovar a robustez do algoritmo e garantir a integridade dos ponteiros de memória, o grupo adotou uma abordagem de dupla validação:
+Para comprovar a robustez do algoritmo e garantir a integridade das referências de memória, o grupo adotou uma abordagem de dupla validação:
 
-1. **Validação de Uso (`main.py`):** Cobre os cenários exigidos com impressões no terminal para conferência visual e validação do encadeamento reverso.
-2. **Validação de Regressão e Estado (`tests.py`):** Utiliza o *framework* `pytest` para aferir matematicamente se a manipulação dos ponteiros ocorre sem quebra de encadeamento.
+1. **Validação de Uso (`Main.java`):** Cobre os cenários exigidos com impressões no terminal para conferência visual e validação do encadeamento reverso.
+2. **Validação de Regressão e Estado (`ListaDinamicaTest.java`):** Utiliza o *framework* **JUnit** para aferir matematicamente se a manipulação dos ponteiros (referências) ocorre sem quebra de encadeamento.
 
-**Evidência de Execução (Suíte Pytest):**
+**Evidência de Execução (Suíte JUnit):**
 
 ```text
-(venv) txg@TX:~/VSCODE projects/dynamic-lists$ pytest -v -s tests.py 
-============================= test session starts ==============================
-platform linux -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0
-cachedir: .pytest_cache
-rootdir: /home/txg/VSCODE projects/dynamic-lists
-collected 5 items                                                                                                                                           
-
-tests.py::test_lista_vazia 
---- TESTE 1: Tratamento de Lista Vazia ---
-Lista vazia.
-Remover início vazia: None
-Remover fim vazia: None
-Buscar vazia (Vitor): None
-PASSED
-
-tests.py::test_insercao_ordenada 
---- TESTE 2: Inserção Ordenada ---
-Inserindo: Tiago, Ana (força início) e Zeca (força fim)...
-Estado atual da lista:
-Ana -> Tiago -> Zeca
-PASSED
-
-tests.py::test_bloqueio_de_nomes_duplicados 
---- TESTE 3: Nomes Duplicados ---
-Lista atual:
-Henrique Oliveski Bombardiéri -> Pedro Schmitt Dalepiane -> Tiago Andrei de Almeida Mendonça -> Vitor da Silva Bonato
-Tentando inserir 'Tiago Andrei de Almeida Mendonça' novamente...
-Resultado: Falha (Correto - Bloqueado)
-PASSED
-
-tests.py::test_remocao_extremidades 
---- TESTE 4: Remoção nas Extremidades ---
-Henrique Oliveski Bombardiéri -> Pedro Schmitt Dalepiane -> Tiago Andrei de Almeida Mendonça -> Vitor da Silva Bonato
-PASSED
-
-tests.py::test_busca_e_remocao_no_meio 
---- TESTE 5: Busca e Remoção no Meio ---
-PASSED
-
-============================== 5 passed in 0.04s ===============================
 
 ```
 
@@ -116,16 +74,16 @@ PASSED
 
 | Característica | Lista Matricial (Vetor + PND) | Lista Dinamicamente Encadeada |
 | --- | --- | --- |
-| **Alocação de Memória** | Estática/Prévia. Aloca um bloco contíguo de tamanho fixo na inicialização. | Sob demanda. Aloca memória na *heap* a cada inserção (`novo_no = No()`). |
-| **Liberação de Memória** | Lógica. O índice volta para a PND, mas a RAM segue ocupada pelo vetor. | Física. O *Garbage Collector* libera a memória automaticamente ao cortar os elos. |
-| **Esgotamento ("Lista Cheia")** | Limite rígido. Quando a PND esvazia, a lista trava, mesmo sobrando RAM no PC. | Limite elástico. Só ocorre falha se a memória RAM física da máquina acabar (*Out of Memory*). |
-| **Complexidade (Inserir/Buscar)** | $O(N)$ - Necessita iteração. | $O(N)$ - Necessita iteração de ponteiro a ponteiro. |
-| **Complexidade (Remover Fim)** | $O(N)$ ou $O(1)$ dependendo do controle interno. | $O(1)$ - Acesso direto garantido pelo rastreamento do ponteiro global `fim`. |
+| **Alocação de Memória** | Estática/Prévia. Aloca um bloco contíguo de tamanho fixo na inicialização. | Sob demanda. Instancia objetos (`new No()`) na *heap* a cada inserção. |
+| **Liberação de Memória** | Lógica. O índice volta para a PND, mas a RAM segue ocupada pelo vetor. | Física. O *Garbage Collector* (GC) da JVM libera a memória automaticamente ao perder as referências. |
+| **Esgotamento ("Lista Cheia")** | Limite rígido. Quando a PND esvazia, a lista trava, mesmo sobrando RAM na máquina. | Limite elástico. Só ocorre falha se a memória da JVM estourar (`OutOfMemoryError`). |
+| **Complexidade (Inserir/Buscar)** | $O(N)$ - Necessita iteração. | $O(N)$ - Necessita iteração de referência a referência. |
+| **Complexidade (Remover Fim)** | $O(N)$ ou $O(1)$ dependendo do controle interno. | $O(1)$ - Acesso direto garantido pelo rastreamento da referência global `fim`. |
 
 **Trade-offs (Vantagens e Desvantagens):**
-A abordagem **Matricial** otimiza o uso de cache do processador (L1/L2) devido à contiguidade na memória, não gerando *overhead* de ponteiros. Seu uso faz sentido em sistemas embarcados (como hardwares de rede ou automação industrial) onde a previsibilidade é crítica, a alocação dinâmica é perigosa e o tamanho máximo dos dados é estritamente conhecido e imutável.
+A abordagem **Matricial** otimiza o uso de cache do processador (L1/L2) devido à contiguidade na memória e tipicamente de primitivos, não gerando *overhead* de referências de objetos. Seu uso faz sentido em sistemas onde a previsibilidade é crítica, o uso do *Garbage Collector* deve ser evitado (pausas STW - *Stop The World*) e o tamanho máximo dos dados é estritamente conhecido.
 
-A abordagem **Dinâmica** resolve o problema do desperdício de memória ociosa. Ela gasta um pouco mais de bytes por registro (para manter as referências `elop` e `eloa`), mas ganha flexibilidade total de expansão. É a escolha padrão na engenharia de software para estruturas cujo volume máximo de dados em tempo de execução é variável ou imprevisível.
+A abordagem **Dinâmica** resolve o problema do desperdício de memória ociosa. Ela gasta um pouco mais de bytes por registro (para manter as referências dos objetos `elop` e `eloa` na JVM), mas ganha flexibilidade total de expansão. É a escolha padrão na engenharia de software (como no caso da própria classe `LinkedList` do Java) para estruturas cujo volume de dados em tempo de execução é variável ou imprevisível.
 
 ---
 
@@ -133,26 +91,26 @@ A abordagem **Dinâmica** resolve o problema do desperdício de memória ociosa.
 
 **Passo 1: Estado Inicial**
 
-* Variáveis globais `inicio = Null` e `fim = Null`.
+* Referências globais `inicio = null` e `fim = null`.
 
-**Passo 2: `inserirOrdenado("Pedro")**`
+**Passo 2: `inserirOrdenado("Pedro")`**
 
-* Cria-se um bloco na memória (Nó).
-* `inicio` e `fim` apontam para o bloco "Pedro".
-* Setas `elop` e `eloa` do bloco "Pedro" apontam para o "Aterramento" (Null).
+* Cria-se um objeto na memória (Nó).
+* `inicio` e `fim` apontam para o nó "Pedro".
+* Referências `elop` e `eloa` do nó "Pedro" apontam para o "Aterramento" (`null`).
 
-**Passo 3: `inserirOrdenado("Vitor")**`
+**Passo 3: `inserirOrdenado("Vitor")`**
 
-* Cria-se novo bloco "Vitor". Como é alfabeticamente maior que "Pedro", entra no fim da lista.
-* Seta `elop` do "Pedro" passa a apontar para o bloco "Vitor".
-* Seta `eloa` do "Vitor" passa a apontar para o bloco "Pedro".
-* Ponteiro global `fim` é atualizado para referenciar o bloco "Vitor".
+* Cria-se novo nó "Vitor". Como é alfabeticamente maior que "Pedro", entra no fim da lista.
+* Referência `elop` do "Pedro" passa a apontar para o nó "Vitor".
+* Referência `eloa` do "Vitor" passa a apontar para o nó "Pedro".
+* Referência global `fim` é atualizada para apontar para o nó "Vitor".
 
-**Passo 4: `remover("Pedro")**`
+**Passo 4: `remover("Pedro")`**
 
-* O ponteiro global `inicio` passa a apontar direto para "Vitor".
-* A seta `eloa` de "Vitor" perde a ligação com "Pedro" e vira Null.
-* O bloco "Pedro" fica completamente isolado (sem referências ativas) e sua memória é recolhida/destruída pelo *Garbage Collector* da linguagem.
+* A referência global `inicio` passa a apontar direto para "Vitor".
+* A referência `eloa` de "Vitor" perde a ligação com "Pedro" e vira `null`.
+* O objeto "Pedro" fica completamente isolado (sem referências ativas *strong*) e sua memória é sinalizada para recolhimento e destruição pelo *Garbage Collector* da JVM.
 
 ---
 
@@ -160,11 +118,11 @@ A abordagem **Dinâmica** resolve o problema do desperdício de memória ociosa.
 
 **Ferramenta utilizada:** Google Gemini.
 
-**Finalidade do uso:** Auxílio na estruturação base do código em Python, elaboração da análise arquitetural (trade-offs físicos vs lógicos entre matriz e alocação dinâmica) e montagem dos casos de teste isolados automatizados para validação das operações de manipulação de referências.
+**Finalidade do uso:** Auxílio na estruturação base do código em Java, elaboração da análise arquitetural (trade-offs físicos vs lógicos entre matriz e alocação dinâmica baseada em objetos) e montagem dos casos de teste isolados automatizados para validação das operações de manipulação de referências.
 
-**Etapas da atividade em que foi utilizada:** Implementação lógica das classes, estruturação da suíte com `pytest` e documentação textual comparativa.
+**Etapas da atividade em que foi utilizada:** Implementação lógica das classes, estruturação da suíte com `JUnit` e documentação textual comparativa.
 
-**Procedimentos adotados para verificar e testar o conteúdo:** O código gerado foi submetido a testes locais no ambiente de execução do grupo em *virtualenv* (utilizando `pytest -v -s` e `main.py`), validando o comportamento dos ponteiros (elop/eloa) nas extremidades e no meio da lista. A validação garantiu a eficácia das atualizações nos testes após a introdução de novos integrantes alterarem a ordenação natural da lista. Realizou-se *code review* e depuração lógica para garantir que a interface pública exigida no enunciado da atividade estava perfeitamente mapeada e as operações possuíam a complexidade correta.
+**Procedimentos adotados para verificar e testar o conteúdo:** O código gerado foi submetido a testes locais no ambiente de execução do grupo na JVM (utilizando `mvn test` e executando o `Main.java`), validando o comportamento das referências (elop/eloa) nas extremidades e no meio da lista. A validação garantiu a eficácia das atualizações nos testes após a introdução de novos integrantes alterarem a ordenação natural da lista. Realizou-se *code review* e depuração lógica para garantir que a interface pública exigida no enunciado da atividade estava perfeitamente mapeada e as operações possuíam a complexidade correta.
 
 **Assinaturas dos Integrantes:**
 
