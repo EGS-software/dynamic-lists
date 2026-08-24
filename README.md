@@ -1,5 +1,3 @@
----
-
 # Trabalho Prático: Lista Duplamente Encadeada Dinâmica
 
 **Instituição:** UNIJUÍ - Universidade Regional do Noroeste do Estado do Rio Grande do Sul
