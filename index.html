@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Visual: Lista Duplamente Encadeada Dinâmica - UNIJUÍ</title>
+  <meta name="description" content="Visualizador interativo da Lista Duplamente Encadeada Dinâmica com ponteiros elop e eloa, alocação na Heap, Garbage Collector e comparador com Lista Matricial.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       CABEÇALHO DA APLICAÇÃO
+       ========================================================================== -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-badge">UNIJUÍ</div>
+      <div class="header-title-group">
+        <h1>
+          <span>⚡</span> Simulador: Lista Duplamente Encadeada Dinâmica
+        </h1>
+        <p>Algoritmos e Estruturas de Dados • Alocação Dinâmica na Heap vs. Lista Matricial (PND)</p>
+      </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <nav class="nav-tabs" aria-label="Abas de visualização">
+      <button class="tab-btn active" data-target="dynamicViewContainer" id="tabDynamicView">
+        <span>🌟</span> Visualizador Dinâmico
+      </button>
+      <button class="tab-btn" data-target="matrixViewContainer" id="tabMatrixView">
+        <span>📊</span> Comparador Matricial (PND)
+      </button>
+      <button class="tab-btn" data-target="theoryViewContainer" id="tabTheoryView">
+        <span>⚖️</span> Análise Teórica & Trade-offs
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-authors" id="btnShowAuthors" title="Ver integrantes do grupo">
+        👥 Integrantes
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       CONTAINER PRINCIPAL
+       ========================================================================== -->
+  <main class="app-container">
+
+    <!-- BARRA DE CONTROLE E OPERAÇÕES -->
+    <section class="control-bar" aria-label="Painel de controle de operações">
+      <div class="operations-group">
+        <!-- Inserir Ordenado -->
+        <div class="input-with-button">
+          <input type="text" id="inputInsertName" placeholder="Nome (ex: Carlos)" maxlength="30">
+          <button class="btn btn-insert" id="btnInsert" title="Inserir mantendo a ordem alfabética">
+            ➕ Inserir
+          </button>
+        </div>
+
+        <!-- Remover por Nome -->
+        <div class="input-with-button">
+          <input type="text" id="inputRemoveName" placeholder="Nome a remover" maxlength="30">
+          <button class="btn btn-remove" id="btnRemove" title="Buscar e remover nó específico">
+            🗑️ Remover
+          </button>
+        </div>
+
+        <!-- Remoções Rápidas -->
+        <button class="btn btn-remove" id="btnRemoveInicio" title="Remover primeiro nó O(1)">
+          ⬅️ Remover Início
+        </button>
+        <button class="btn btn-remove" id="btnRemoveFim" title="Remover último nó O(1)">
+          Remover Fim ➡️
+        </button>
+
+        <!-- Buscar -->
+        <div class="input-with-button">
+          <input type="text" id="inputSearchName" placeholder="Buscar nome" maxlength="30">
+          <button class="btn btn-search" id="btnSearch" title="Buscar elemento na lista">
+            🔍 Buscar
+          </button>
+        </div>
+
+        <!-- Exibição -->
+        <button class="btn btn-display" id="btnDisplay" title="Exibir do início ao fim via elop">
+          ⏩ Exibir (elop)
+        </button>
+        <button class="btn btn-display" id="btnDisplayReverse" title="Exibir do fim ao início via eloa">
+          ⏪ Exibir Inverso (eloa)
+        </button>
+
+        <!-- Limpar -->
+        <button class="btn" id="btnResetList" style="color: #94a3b8;" title="Esvaziar a lista">
+          🔄 Limpar
+        </button>
+      </div>
+
+      <!-- Controles de Reprodução / Stepper -->
+      <div class="playback-controls" aria-label="Controles de reprodução passo a passo">
+        <button class="playback-btn" id="btnStepPrev" title="Passo Anterior" disabled>
+          ◀
+        </button>
+        <button class="playback-btn" id="btnPlayPause" title="Reproduzir / Pausar">
+          <span id="playIcon">▶</span>
+        </button>
+        <button class="playback-btn" id="btnStepNext" title="Próximo Passo" disabled>
+          ▶
+        </button>
+        <button class="playback-btn" id="btnSkipToEnd" title="Pular para o Fim da Operação">
+          ⏭
+        </button>
+
+        <span class="step-indicator" id="stepIndicator">Passo 0 / 0</span>
+
+        <div class="speed-control">
+          <label for="speedSelect">Velocidade:</label>
+          <select id="speedSelect">
+            <option value="2000">0.5x</option>
+            <option value="1200" selected>1.0x</option>
+            <option value="600">2.0x</option>
+            <option value="250">4.0x</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- BARRA DE PRESETS DE TESTE DO TRABALHO (Main.java) -->
+    <section class="test-presets-bar" aria-label="Casos de teste do trabalho">
+      <span class="test-presets-title">🧪 Testes do Main.java:</span>
+      <button class="btn-preset" id="presetTest1">1. Lista Vazia</button>
+      <button class="btn-preset" id="presetTest2">2. Inserção Ordenada (Grupo + Ana/Zeca)</button>
+      <button class="btn-preset" id="presetTest3">3. Nomes Duplicados</button>
+      <button class="btn-preset" id="presetTest4">4. Remover Extremidades</button>
+      <button class="btn-preset" id="presetTest5">5. Busca e Remoção Meio</button>
+      <button class="btn-preset" id="presetTest6">6. Exibição Inversa (eloa)</button>
+      <button class="btn-preset run-all" id="presetTestAll">▶ Executar Cenário Completo</button>
+    </section>
+
+    <!-- ==========================================================================
+         MODO 1: VISUALIZADOR DINÂMICO (CANVAS + CÓDIGO + EXPLICAÇÃO)
+         ========================================================================== -->
+    <div class="view-mode-container active" id="dynamicViewContainer">
+      
+      <!-- Cabeçalho de Status da Memória Heap -->
+      <div class="heap-status-header">
+        <div class="heap-legend">
+          <span class="legend-item"><span class="legend-dot inicio"></span> inicio (Cabeçalho)</span>
+          <span class="legend-item"><span class="legend-dot fim"></span> fim (Cauda)</span>
+          <span class="legend-item"><span class="legend-dot elop"></span> elop (Próximo)</span>
+          <span class="legend-item"><span class="legend-dot eloa"></span> eloa (Anterior)</span>
+          <span class="legend-item"><span class="legend-dot gc"></span> Garbage Collector (GC)</span>
+        </div>
+        <div class="heap-stats">
+          <span>Nós Ativos na Heap: <strong id="statTotalNodes">0</strong></span>
+          <span>Memória Alocada: <strong id="statHeapBytes">0 B</strong></span>
+        </div>
+      </div>
+
+      <!-- CANVAS PRINCIPAL DOS NÓS DINÂMICOS -->
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <svg class="links-svg-layer" id="linksSvgLayer"></svg>
+        <div class="nodes-container" id="nodesContainer">
+          <!-- Os nós serão renderizados dinamicamente via JS -->
+        </div>
+      </div>
+
+      <!-- PAINÉIS INFERIORES TRIPLOS (Explicação, Código Java e Console) -->
+      <div class="bottom-panels-grid">
+        
+        <!-- 1. Painel de Explicação Passo a Passo -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>💡</span> Explicação Didática
+            </div>
+            <span class="step-badge" id="stepBadgeTitle">Pronto</span>
+          </div>
+          <div class="panel-body">
+            <div class="step-explanation-box">
+              <p class="step-description-text" id="stepDescText">
+                Selecione uma operação acima para visualizar passo a passo a alocação de memória na <em>Heap</em>, a religação de ponteiros <code>elop</code>/<code>eloa</code> e a atuação do <em>Garbage Collector</em>.
+              </p>
+              <ul class="step-details-list" id="stepDetailsList">
+                <li>Estrutura pronta para execução.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Painel de Código Java Sincronizado -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>☕</span> Código Java em Execução (ListaDinamica.java)
+            </div>
+            <span style="font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #38bdf8;">JVM Heap Simulation</span>
+          </div>
+          <div class="code-viewer-container" id="codeViewerBody">
+            <!-- Linhas de código Java com syntax highlighting -->
+          </div>
+        </div>
+
+        <!-- 3. Painel de Console / Terminal de Saída -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>💻</span> Terminal de Execução (Logs)
+            </div>
+            <span style="font-family: 'Fira Code', monospace; font-size: 0.75rem; color: #10b981;">Main.java Output</span>
+          </div>
+          <div class="terminal-body" id="terminalLogBody">
+            <!-- Logs em tempo real -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==========================================================================
+         MODO 2: COMPARADOR MATRICIAL (VETOR FIXO + PND)
+         ========================================================================== -->
+    <div class="view-mode-container" id="matrixViewContainer">
+      <div class="heap-status-header">
+        <div style="font-weight: 600; color: #38bdf8;">
+          📋 Estrutura Matricial Estática: Vetor de Nós + Pilha de Nós Disponíveis (PND)
+        </div>
+        <div class="heap-stats" id="matrixStatsContainer">
+          <!-- Estatísticas da Matriz -->
+        </div>
+      </div>
+
+      <!-- Barra de Controle Matricial -->
+      <div class="control-bar" style="margin-bottom: 0;">
+        <div class="operations-group">
+          <div class="input-with-button">
+            <input type="text" id="matrixInputName" placeholder="Nome para matriz" maxlength="20">
+            <button class="btn btn-insert" id="matrixBtnInsert">➕ Inserir no Vetor</button>
+          </div>
+          <button class="btn btn-remove" id="matrixBtnRemove">🗑️ Remover do Vetor</button>
+          <button class="btn" id="matrixBtnReset">🔄 Resetar Vetor e PND</button>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">
+          Observe o esgotamento da PND ao inserir 6 elementos!
+        </span>
+      </div>
+
+      <div class="matrix-container">
+        <!-- Tabela do Vetor Fixo -->
+        <div class="matrix-card">
+          <h3 style="font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <span>🗄️</span> Vetor Fixo de Nós na Memória RAM (Capacidade: 6 registros)
+          </h3>
+          <div id="matrixTableContainer">
+            <!-- Tabela renderizada dinamicamente -->
+          </div>
+        </div>
+
+        <!-- Pilha de Nós Disponíveis (PND) -->
+        <div class="matrix-card">
+          <h3 style="font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <span>📚</span> Pilha de Nós Disponíveis (PND)
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">
+            Gerencia logicamente os índices livres do vetor sem liberar a RAM física.
+          </p>
+          <div class="pnd-stack-visual" id="pndStackContainer">
+            <!-- Slots da PND -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODO 3: ANÁLISE TEÓRICA & TRADE-OFFS
+         ========================================================================== -->
+    <div class="view-mode-container" id="theoryViewContainer">
+      <div class="theory-container">
+        
+        <!-- Tabela Comparativa Geral -->
+        <div class="comparison-table-wrapper">
+          <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <span>⚖️</span> Comparação Detalhada: Lista Matricial vs. Lista Dinamicamente Encadeada
+          </h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th>Lista Matricial (Vetor Fixo + PND)</th>
+                <th>Lista Dinamicamente Encadeada (Heap)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Alocação de Memória</strong></td>
+                <td>Estática / Prévia: Aloca um bloco contíguo de tamanho fixo na inicialização.</td>
+                <td>Sob Demanda: Instancia objetos (<code>new No()</code>) na <em>Heap</em> a cada inserção.</td>
+              </tr>
+              <tr>
+                <td><strong>Liberação de Memória</strong></td>
+                <td>Lógica: O índice retorna para a PND, mas a RAM segue ocupada pelo array.</td>
+                <td>Física: O <em>Garbage Collector</em> (GC) da JVM desaloca fisicamente ao perder referências.</td>
+              </tr>
+              <tr>
+                <td><strong>Esgotamento ("Lista Cheia")</strong></td>
+                <td>Limite rígido: Quando a PND esvazia, a inserção falha mesmo havendo GBs de RAM sobrando.</td>
+                <td>Limite elástico: Só ocorre falha se esgotar toda a memória da JVM (<code>OutOfMemoryError</code>).</td>
+              </tr>
+              <tr>
+                <td><strong>Complexidade: Inserir / Buscar</strong></td>
+                <td>$O(N)$ - Necessita iteração sequencial pelos índices encadeados.</td>
+                <td>$O(N)$ - Necessita caminhamento nó a nó através das referências <code>elop</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Complexidade: Remover Fim</strong></td>
+                <td>$O(N)$ ou $O(1)$ dependendo do controle interno.</td>
+                <td>$O(1)$ - Acesso direto garantido pela referência global <code>fim</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Localidade de Cache (L1/L2)</strong></td>
+                <td>Excelente devido à contiguidade física dos elementos na memória.</td>
+                <td>Pode sofrer com fragmentação na <em>Heap</em>, nós espalhados na memória.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Cards de Trade-offs e Quando Usar -->
+        <div class="theory-grid">
+          <div class="theory-card">
+            <h3><span>🏢</span> Quando usar a Lista Matricial?</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">
+              A abordagem <strong>Matricial</strong> é ideal para sistemas de tempo real, sistemas embarcados ou jogos de alta performance onde as pausas de coleta do <em>Garbage Collector</em> (*Stop The World*) são inaceitáveis e o número máximo de registros é rigorosamente previsível.
+            </p>
+          </div>
+
+          <div class="theory-card">
+            <h3><span>🚀</span> Quando usar a Lista Dinâmica?</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">
+              A abordagem <strong>Dinâmica</strong> é o padrão da engenharia de software corporativa (como na classe <code>LinkedList</code> do Java). Ela resolve o desperdício de memória ociosa e permite que a estrutura cresça e encolha organicamente conforme a demanda em tempo de execução.
+            </p>
+          </div>
+        </div>
+
+        <!-- Referência Bibliográfica -->
+        <div class="theory-card" style="background: rgba(15, 23, 42, 0.5); border-style: dashed;">
+          <h4 style="color: #38bdf8; font-size: 0.9rem;">📖 Referência de Apoio Acadêmica</h4>
+          <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px;">
+            CARRARD, Marcos C. <em>Algoritmos e Estruturas de Dados: Parte 2</em>. Ijuí: Ed. UNIJUÍ, 1998 — Capítulo 3 (Listas Encadeadas), seção 3.2.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL DE INTEGRANTES E INFORMAÇÕES DO PROJETO
+       ========================================================================== -->
+  <div class="modal-overlay" id="authorsModal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Componentes do Grupo</h2>
+        <button class="btn-close-modal" id="btnCloseModal">&times;</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">
+        <strong>UNIJUÍ</strong> - Universidade Regional do Noroeste do Estado do Rio Grande do Sul<br>
+        <strong>Disciplina:</strong> Algoritmos e Estruturas de Dados
+      </p>
+
+      <div class="authors-list">
+        <div class="author-card">
+          <div class="author-avatar">TM</div>
+          <div class="author-name">Tiago Andrei de Almeida Mendonça</div>
+        </div>
+        <div class="author-card">
+          <div class="author-avatar">VB</div>
+          <div class="author-name">Vítor da Silva Bonato</div>
+        </div>
+        <div class="author-card">
+          <div class="author-avatar">PD</div>
+          <div class="author-name">Pedro Schmitt Dalepiane</div>
+        </div>
+        <div class="author-card">
+          <div class="author-avatar">HB</div>
+          <div class="author-name">Henrique Oliveski Bombardiéri</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS DA APLICAÇÃO -->
+  <script src="js/model.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/matrixVisualizer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

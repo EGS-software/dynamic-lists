@@ -33,6 +33,15 @@ java -cp bin Main
 
 ```
 
+**Passo 3: Executar o Visualizador Web Interativo (Simulador)**
+
+Basta abrir o arquivo `index.html` em qualquer navegador web moderno (Google Chrome, Firefox, Edge, etc.) ou servir via Live Server / servidor estático local:
+
+* Clique duas vezes no arquivo `index.html` na raiz do projeto; ou
+* No VS Code, utilize a extensão **Live Server** (clique com botão direito em `index.html` > *Open with Live Server*).
+
+O simulador web conta com animação passo a passo (*stepper*), visualização dos nós na memória *Heap*, setas curvas SVG para `elop`/`eloa`, animação de descarte do *Garbage Collector*, sincronização do código Java em tempo real e comparador com a Lista Matricial (PND).
+
 
 ---
 
