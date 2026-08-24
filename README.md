@@ -1,5 +1,3 @@
-Aqui está a versão do seu documento refatorada e adaptada para o ecossistema e nomenclatura do **Java**. As referências de ambiente virtual, `pytest` e arquivos `.py` foram substituídas por seus equivalentes em Java (JDK, Maven/JUnit e `.java`).
-
 ---
 
 # Trabalho Prático: Lista Duplamente Encadeada Dinâmica
