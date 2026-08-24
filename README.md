@@ -148,7 +148,7 @@ Tiago Andrei de Almeida Mendonça
 
 ---
 
-Vitor da Silva Bonato
+Vítor da Silva Bonato
 
 ---
 
