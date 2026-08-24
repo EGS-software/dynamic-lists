@@ -37,13 +37,6 @@ java -cp bin Main
 
 ```
 
-**Passo 3: Executar os testes automatizados (JUnit via Maven)**
-*(O arquivo `pom.xml` já contém as dependências do JUnit)*
-
-```bash
-mvn test
-
-```
 
 ---
 
