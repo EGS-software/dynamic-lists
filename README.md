@@ -138,7 +138,7 @@ A abordagem **Dinâmica** resolve o problema do desperdício de memória ociosa.
 
 **Etapas da atividade em que foi utilizada:** Implementação lógica das classes, estruturação da suíte com `JUnit` e documentação textual comparativa.
 
-**Procedimentos adotados para verificar e testar o conteúdo:** O código gerado foi submetido a testes locais no ambiente de execução do grupo na JVM (utilizando `mvn test` e executando o `Main.java`), validando o comportamento das referências (elop/eloa) nas extremidades e no meio da lista. A validação garantiu a eficácia das atualizações nos testes após a introdução de novos integrantes alterarem a ordenação natural da lista. Realizou-se *code review* e depuração lógica para garantir que a interface pública exigida no enunciado da atividade estava perfeitamente mapeada e as operações possuíam a complexidade correta.
+**Procedimentos adotados para verificar e testar o conteúdo:** O código gerado foi submetido a testes locais no ambiente de execução do grupo na JVM (executando o `Main.java`), validando o comportamento das referências (elop/eloa) nas extremidades e no meio da lista. A validação garantiu a eficácia das atualizações nos testes após a introdução de novos integrantes alterarem a ordenação natural da lista. Realizou-se *code review* e depuração lógica para garantir que a interface pública exigida no enunciado da atividade estava perfeitamente mapeada e as operações possuíam a complexidade correta.
 
 **Assinaturas dos Integrantes:**
 
