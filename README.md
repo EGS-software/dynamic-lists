@@ -26,7 +26,7 @@ No terminal do seu sistema operacional, navegue até a pasta raiz do projeto e s
 **Passo 1: Compilar o projeto**
 
 ```bash
-javac -d bin src/**/*.java
+javac -d bin src\*.java
 
 ```
 
@@ -64,8 +64,31 @@ Para comprovar a robustez do algoritmo e garantir a integridade das referências
 
 **Evidência de Execução (Suíte JUnit):**
 
-```text
+```code
+PS C:\Users\tiago\OneDrive\Documentos\Vscode Projetos\dynamic-lists> java -cp bin Main
+--- TESTE 1: Tratamento de Lista Vazia ---
+Lista vazia.
+Remover início vazia: null
+Buscar vazia (Vitor): null
 
+--- TESTE 2: Inserção Ordenada ---
+Ana -> Henrique Oliveski Bombardiéri -> Pedro Schmitt Dalepiane -> Tiago Andrei de Almeida Mendonça -> Vitor da Silva Bonato -> Zeca
+
+--- TESTE 3: Nomes Duplicados ---
+Inserir duplicado ('Tiago...'): Falha (Correto)
+
+--- TESTE 4: Remoção nas Extremidades ---
+Removido Início: Ana
+Removido Fim: Zeca
+Henrique Oliveski Bombardiéri -> Pedro Schmitt Dalepiane -> Tiago Andrei de Almeida Mendonça -> Vitor da Silva Bonato
+
+--- TESTE 5: Busca e Remoção no Meio ---
+Busca 'Pedro...': Encontrado
+Após remover 'Pedro...':
+Henrique Oliveski Bombardiéri -> Tiago Andrei de Almeida Mendonça -> Vitor da Silva Bonato
+
+--- TESTE 6: Exibição Inversa (Validação de eloa) ---
+Vitor da Silva Bonato <- Tiago Andrei de Almeida Mendonça <- Henrique Oliveski Bombardiéri
 ```
 
 ---
